@@ -1,7 +1,11 @@
 'use strict'
-var driverStore = require('../stores/corbelDriver.store')
+var connectionStore = require('../stores/connection.store')
+var configurationStore = require('../stores/configuration.store')
 var utils = require('../utils')
 var parseToComposrError = require('../parseToComposrError')
+
+var corbelLoad = require('./corbelLoad')
+var mongoLoad = require('./mongoLoad')
 
 var BaseDao = function (options) {
   this.COLLECTION = options.collection
@@ -12,22 +16,10 @@ BaseDao.prototype.load = function (id) {
     return Promise.reject('missing:id')
   }
 
-  var that = this
-
-  if (driverStore.getDriver()) {
-    return driverStore.getDriver()
-      .resources
-      .resource(this.COLLECTION, id)
-      .get()
-      .then(function (response) {
-        return response.data
-      })
-      .catch(function (response) {
-        var error = parseToComposrError(response.data, 'Invalid ' + that.COLLECTION + ' load', response.status)
-        throw error
-      })
+  if(configurationStore.get().remote.corbel){
+    return corbelLoad(this.COLLECTION, id);
   } else {
-    return Promise.reject('missing:driver')
+    return mongoLoad(this.COLLECTION, id);
   }
 }
 
@@ -38,9 +30,9 @@ BaseDao.prototype.loadSome = function (ids) {
     return Promise.reject('missing:ids')
   }
 
-  if (driverStore.getDriver()) {
+  if (connectionStore.getDriver()) {
     var caller = function (pageNumber, pageSize) {
-      return driverStore.getDriver()
+      return connectionStore.getDriver()
         .resources
         .collection(that.COLLECTION)
         .get({
@@ -69,7 +61,7 @@ BaseDao.prototype.loadSome = function (ids) {
 BaseDao.prototype.loadAll = function () {
   var that = this
   var caller = function (pageNumber, pageSize) {
-    return driverStore.getDriver()
+    return connectionStore.getDriver()
       .resources
       .collection(that.COLLECTION)
       .get({
@@ -88,13 +80,13 @@ BaseDao.prototype.loadAll = function () {
 }
 
 BaseDao.prototype.save = function (item, driver) {
-  if (!driverStore.getDriver() && !driver) {
+  if (!connectionStore.getDriver() && !driver) {
     return Promise.reject('missing:driver')
   }
 
   var that = this
 
-  var theDriver = driver || driverStore.getDriver()
+  var theDriver = driver || connectionStore.getDriver()
 
   return theDriver
     .resources
@@ -107,7 +99,7 @@ BaseDao.prototype.save = function (item, driver) {
 }
 
 BaseDao.prototype.delete = function (id, driver) {
-  if (!driverStore.getDriver() && !driver) {
+  if (!connectionStore.getDriver() && !driver) {
     return Promise.reject('missing:driver')
   }
 
@@ -117,7 +109,7 @@ BaseDao.prototype.delete = function (id, driver) {
 
   var that = this
 
-  var theDriver = driver || driverStore.getDriver()
+  var theDriver = driver || connectionStore.getDriver()
 
   return theDriver
     .resources

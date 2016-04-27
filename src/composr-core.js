@@ -13,7 +13,7 @@ function CompoSR () {
 CompoSR.prototype.init = require('./lib/init')
 CompoSR.prototype.initCorbelDriver = require('./lib/initCorbelDriver')
 CompoSR.prototype.clientLogin = require('./lib/clientLogin')
-CompoSR.prototype.bindConfiguration = require('./lib/bindConfiguration')
+CompoSR.prototype.getConfiguration = require('./lib/getConfiguration')
 
 CompoSR.prototype.phraseDao = require('./lib/daos/phraseDao')
 CompoSR.prototype.snippetDao = require('./lib/daos/snippetDao')
