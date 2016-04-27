@@ -11,8 +11,9 @@
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
 
 
-> The core package for Corbel's Composr. [NPM page][npm-url]
-
+> The core package for Composr. [NPM page][npm-url]
+> 
+> Composr-core provides the ability to execute pieces of JavaScript code that are fetched from a database.
 
 # Usage
 
@@ -24,18 +25,22 @@ npm install --save composr-core
 
 [What are Phrases or Snippets?](https://github.com/corbel-platform/composr-core/wiki/Phrases)
 
-## Setup for fetching remote data from Corbel
+## Setup for fetching remote data from a [Corbel Generic Backend][corbel-link]
 
 ```javascript
 var composr = require('composr-core');
 
 var options = {
-  credentials: {
-    clientId: 'demo',
-    clientSecret: 'demo',
-    scopes: 'demo'
+  remote: {
+    corbel: {
+      credentials: {
+        clientId: 'demo',
+        clientSecret: 'demo',
+        scopes: 'demo'
+      },
+      urlBase: 'https://remote-corbel.com'
+    }  
   },
-  urlBase: 'https://remote-corbel.com',
   timeout: 3000
 };
 
@@ -46,10 +51,34 @@ composr.init(options)
   });
 ```
 
+## Setup for fetching remote data from a MongoDB
+
+```javascript
+var composr = require('composr-core');
+
+var options = {
+  remote: {
+    mongo: {
+      port : 270001,
+      uri: 'mongodb://localhost/mydatabase'
+    }
+  },
+  timeout: 3000
+};
+
+//Trigger the load of data from the "remote mongo"
+composr.init(options)
+  .then(function() {
+    //Ready to go
+  });
+```
+
 ## Setup with local data
 
 ```javascript
 var composr = require('composr-core');
+
+//First fetch your Phrase and Snippets models from a local file system somehow... or create them programatically
 
 //Register phrases (Returns a promise)
 var phrasesLoaded = composr.Phrase.register(domain, phrases);
@@ -290,7 +319,7 @@ Later on, from your project, you can launch `node-inspector` debug and add breac
 
 
 
-
+[corbel-link]: https://github.com/corbel-platform/corbel
 [npm-badge]: https://badge.fury.io/js/composr-core.svg
 [npm-url]: https://www.npmjs.org/package/composr-core
 

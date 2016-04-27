@@ -20,11 +20,7 @@ function Requirer (options) {
   this.Snippet = options.Snippet
   this.events = options.events
 }
-
-Requirer.prototype.configure = function (config) {
-  this.urlBase = config.urlBase
-}
-
+// TODO: Load corbel-js depending on config
 Requirer.prototype.forDomain = function (domain, version, functionMode) {
   var module = this
 

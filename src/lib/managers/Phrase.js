@@ -29,8 +29,8 @@ PhraseManager.prototype = new BaseManager({
 })
 
 PhraseManager.prototype.configure = function (config) {
-  this.config = {
-    urlBase: config.urlBase
+  if ( config.remote.corbel ) {
+    this.config.urlBase = config.remote.corbel.urlBase
   }
 }
 

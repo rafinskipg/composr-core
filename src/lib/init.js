@@ -5,11 +5,12 @@ function init (options, fetch) {
 
   this.reset()
 
-  this.config = this.bindConfiguration(options)
+  var config = this.getConfiguration(options)
+
+  configurationStore.set(config);
+  //this.setRemoteDao()
 
   this.Phrase.configure(this.config)
-
-  this.requirer.configure(this.config)
 
   if (!fetch) {
     return Promise.resolve()
